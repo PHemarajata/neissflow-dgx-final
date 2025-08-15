@@ -1,9 +1,9 @@
 process GUBBINS {
     label 'process_high'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/gubbins:3.3.5--py39pl5321he4a0461_0':
-        'quay.io/biocontainers/gubbins:3.3.5--py39pl5321he4a0461_0' }"
+    container "${ workflow.containerEngine in ['singularity','apptainer'] 
+  ? 'docker://staphb/gubbins:3.3.5' 
+  : 'staphb/gubbins:3.3.5' }"
 
     input:
     path(clean_full_aln)
