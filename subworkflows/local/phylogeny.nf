@@ -83,7 +83,7 @@ workflow PHYLOGENY {
     COUNT_MONO_NUC (
         ch_clean
     )
-    //ch_versions = ch_versions.mix(COUNT_MONO_NUC.out.versions)
+    ch_versions = ch_versions.mix(COUNT_MONO_NUC.out.versions)
 
     //
     // Calculate SNP distances between samples
@@ -108,7 +108,7 @@ workflow PHYLOGENY {
     CLUSTER_COLORING (
         OUTBREAK_DETECTION.out.outbreaks
     )
-    //ch_versions = ch_versions.mix(CLUSTER_COLORING.out.versions)
+    ch_versions = ch_versions.mix(CLUSTER_COLORING.out.versions)
 
     //
     // Make partition guide for RAxML ascertainment correction
