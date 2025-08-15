@@ -63,43 +63,46 @@ process PHYLOGENY_QC {
         (( count++ ))
     done
 
-    printf %s/t%s/t%s/t%s/n "QC Parameter" "Accepted Value" "Actual Value" "Pass/Fail" > phylogeny_qc_report.tsv
+    printf "%s\\t%s\\t%s\\t%s\\n" "QC Parameter" "Accepted Value" "Actual Value" "Pass/Fail" > phylogeny_qc_report.tsv
 
-    if [[ ${num_samples} -eq \${num_align}-1 ]]; then
+    num_samples=\$(grep ">" $align | grep -v "^>Reference" | wc -l)
+    
+    if [[ \$num_samples -eq \$((\${num_align}-1)) ]]; then
         out="pass"
     else 
         out="fail"
     fi
-    printf %s/t%s/t%s/t%s/n "Number of Samples Aligned" $num_samples \${num_align}-1 \$out >> phylogeny_qc_report.tsv
+    printf "%s\\t%s\\t%s\\t%s\\n" "Number of Samples Aligned" \$num_samples \$((\${num_align}-1)) \$out >> phylogeny_qc_report.tsv
 
-    if [[ ${num_samples} -eq \${num_align}-1 ]]; then
+    if [[ "\$same_length" == "true" ]]; then
         out="pass"
     else
         out="fail"
     fi
-    printf %s/t%s/t%s/t%s/n "Do Lengths Match Reference Length" "true" \$same_length \$out >> phylogeny_qc_report.tsv
+    printf "%s\\t%s\\t%s\\t%s\\n" "Do Lengths Match Reference Length" "true" \$same_length \$out >> phylogeny_qc_report.tsv
 
-    if [[ \${bad_nuc_lcounts} -eq 0 ]]; then
+    if [[ \${bad_nuc_lcount} -eq 0 ]]; then
         out="pass"
     else
         out="fail"
     fi
-    printf %s/t%s/t%s/t%s/n "Number of Lines in Align with Invalid Nucleotide Chars" "0" \${bad_nuc_lcounts} \$out >> phylogeny_qc_report.tsv
+    printf "%s\\t%s\\t%s\\t%s\\n" "Number of Lines in Align with Invalid Nucleotide Chars" "0" \${bad_nuc_lcount} \$out >> phylogeny_qc_report.tsv
 
     if [ "\${all_in_tree}" == "true" ]; then
         out="pass"
     else
         out="fail"
     fi
-    printf %s/t%s/t%s/t%s/n "All Samples are Present in Newick Tree" "true" \${all_in_tree} \$out >> phylogeny_qc_report.tsv
+    printf "%s\\t%s\\t%s\\t%s\\n" "All Samples are Present in Newick Tree" "true" \${all_in_tree} \$out >> phylogeny_qc_report.tsv
 
     if [[ \${#outliers[@]} -eq 0 ]]; then
         out="pass"
+        out_list="None"
     else
         out="fail"
         out_list=\$(IFS=, ; echo "\${outliers[*]}")
     fi
-    printf %s/t%s/t%s/t%s/n "Outlier Samples Found" "NA" \${out_list} \$out >> phylogeny_qc_report.tsv
+    printf "%s\\t%s\\t%s\\t%s\\n" "Outlier Samples Found" "None" \${out_list} \$out >> phylogeny_qc_report.tsv
 
     """
 }
